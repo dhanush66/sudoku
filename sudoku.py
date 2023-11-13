@@ -1,15 +1,10 @@
+from data import data
+
 class Sd:
+    """Sudoku solver"""
     def __init__(self) -> None:
-        #self.board = [['_' for i in range(9)] for j in range(9)]
-        self.board = [[8,0,0,0,0,0,5,0,3],
-                      [0,7,3,1,0,8,0,2,0],
-                      [2,0,4,0,7,5,1,6,0],
-                      [0,5,9,0,0,0,0,8,0],
-                      [0,0,2,0,0,0,7,0,0],
-                      [0,4,0,0,0,0,9,3,0],
-                      [0,2,5,9,3,0,8,0,7],
-                      [0,3,0,7,0,4,2,5,0],
-                      [4,0,7,0,0,0,0,0,1]]
+        #self.result = [['_' for i in range(9)] for j in range(9)]
+        self.result = data
         self.winner = True
         self.possible = [[[1,2,3,4,5,6,7,8,9] for i in range(9)] for j in range(9)]
 
@@ -18,7 +13,7 @@ class Sd:
         print("Enter '0' if current position dont have value.")
         for i in range(9):
             for j in range(9):
-                self.board[i][j] = int(input(f"provide value for pos{i}{j}:"))
+                self.result[i][j] = int(input(f"provide value for pos{i}{j}:"))
             print('')
 
     def print_board(self):
@@ -26,7 +21,7 @@ class Sd:
             print('|',end=' ')
             for j in range(9):
             
-                print(self.board[i][j] ,end=' ')
+                print(self.result[i][j] ,end=' ')
                 if j == 2 or j == 5 :
                     print('|', end=' ')
             print('|')
@@ -56,7 +51,7 @@ class Sd:
     def is_board_contains_zero(self):
         for i in range(9):
             for j in range(9):
-                if self.board[i][j] == 0:
+                if self.result[i][j] == 0:
                     self.winner = True
                     return
 
@@ -64,17 +59,17 @@ class Sd:
     
     def add_possible_row(self, a,b):
         for m in range(9):
-            if self.board[a][m] != 0:
-                if self.board[a][m] in self.possible[a][b]:
-                    self.possible[a][b].remove(self.board[a][m])
+            if self.result[a][m] != 0:
+                if self.result[a][m] in self.possible[a][b]:
+                    self.possible[a][b].remove(self.result[a][m])
           
 
     def add_possible_column(self, a,b):
         
         for m in range(9):
-            if self.board[m][b] != 0:
-                if self.board[m][b] in self.possible[a][b]:
-                    self.possible[a][b].remove(self.board[m][b])
+            if self.result[m][b] != 0:
+                if self.result[m][b] in self.possible[a][b]:
+                    self.possible[a][b].remove(self.result[m][b])
 
 
     def add_possible_square(self,a,b):
@@ -82,14 +77,14 @@ class Sd:
         n = (b//3) * 3
         for m in range(m, m+3):
             for n in range(n, n+3):
-                if self.board[m][n] != 0:
-                    if self.board[m][n] in self.possible[a][b]:
-                        self.possible[a][b].remove(self.board[m][n])
+                if self.result[m][n] != 0:
+                    if self.result[m][n] in self.possible[a][b]:
+                        self.possible[a][b].remove(self.result[m][n])
             n = (b//3) * 3
 
 
     def is_empty_val(self,a,b):
-        if self.board[a][b] == 0:
+        if self.result[a][b] == 0:
             return True
         else:
             return False
@@ -117,22 +112,22 @@ class Sd:
         
         for r in row:  # add possible in every empty row
             for m in range(9):
-                if self.board[a][m] != 0:
-                    if self.board[a][m] in self.possible[a][r]:
-                        self.possible[a][r].remove(self.board[a][m])
+                if self.result[a][m] != 0:
+                    if self.result[a][m] in self.possible[a][r]:
+                        self.possible[a][r].remove(self.result[a][m])
 
         for c in col:
              for m in range(9):
-                if self.board[m][b] != 0:
-                    if self.board[m][b] in self.possible[c][b]:
-                        self.possible[c][b].remove(self.board[m][b])
+                if self.result[m][b] != 0:
+                    if self.result[m][b] in self.possible[c][b]:
+                        self.possible[c][b].remove(self.result[m][b])
             
     def add_possible_grid(self, a, b):
-        val = self.board[a][b]
+        val = self.result[a][b]
 
         for m in range((a//3)*3, (a//3)*3 +3):
             for n in range((b//3)*3, (b//3)*3 +3):
-                if self.board[m][n] ==0:
+                if self.result[m][n] ==0:
                     if val in self.possible[m][n]:
                         self.possible[m][n].remove(val)
 
@@ -156,7 +151,7 @@ class Sd:
                     valueRow = val
         for col in row:
             if valueRow in self.possible[a][col]:
-                self.board[a][col] = valueRow
+                self.result[a][col] = valueRow
                 self.add_possible_row_col(a,col)
                 self.add_possible_grid(a,col)
                 self.possible[a][col].clear()
@@ -186,7 +181,7 @@ class Sd:
                     valueCol = val
         for row in col:
             if valueCol in self.possible[row][b]:
-                self.board[row][b] = valueCol
+                self.result[row][b] = valueCol
                 self.add_possible_row_col(row, b)
                 self.add_possible_grid(row,b)
                 self.possible[row][b].clear()
@@ -367,7 +362,7 @@ class Sd:
         for i in range((a//3)*3, (a//3*3)+3):
             if i != a:
                 for j in range(b1//3*3,(b1//3*3)+3):
-                    if self.board[i][j] == 0:
+                    if self.result[i][j] == 0:
                         if val in self.possible[i][j]:
                             self.possible[i][j].remove(val)
 
@@ -376,7 +371,7 @@ class Sd:
         for i in range(a1//3*3, (a1//3*3)+3):
             for j in range(b//3*3,(b//3*3)+3):
                 if j != b:
-                    if self.board[i][j] == 0:
+                    if self.result[i][j] == 0:
                         if val in self.possible[i][j]:
                             self.possible[i][j].remove(val)
 
@@ -848,7 +843,7 @@ class Sd:
         k=0
         for i in range(a*3,(a*3)+3):
             for j in range(b*3, (b*3)+3):
-                if self.board[i][j] ==0:
+                if self.result[i][j] ==0:
                     sq.append([i,j])
         return sq
 
@@ -870,7 +865,7 @@ class Sd:
         
         for i,j in sq:
             if val in self.possible[i][j]:
-                self.board[i][j] = val
+                self.result[i][j] = val
                 self.add_possible_row_col(i,j)
                 self.add_possible_grid(i,j)
                 self.possible[i][j].clear()
@@ -885,7 +880,7 @@ class Sd:
     def add_possible(self): # removes possible candidates for each row, col and square
         for i in range(9):
                 for j in range(9):
-                    if self.board[i][j] == 0:
+                    if self.result[i][j] == 0:
                         self.add_possible_row(i,j) #
                         self.add_possible_column(i,j)
                         self.add_possible_square(i,j)
@@ -898,7 +893,7 @@ class Sd:
             for j in range(9):
                 if len(self.possible[i][j]) != 9:
                     if len(self.possible[i][j]) == 1:
-                        self.board[i][j] = self.possible[i][j].pop()
+                        self.result[i][j] = self.possible[i][j].pop()
                         self.add_possible_row_col(i,j)
                         self.add_possible_grid(i,j)
                         self.possible[i][j].clear()
