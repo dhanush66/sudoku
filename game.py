@@ -1,5 +1,6 @@
 import sys
 import pygame
+import pygame.freetype
 
 from settings import Settings
 from board import Board
@@ -10,6 +11,8 @@ class Game:
         """ Initialize the game, and create game resources"""
         pygame.init()
         self.clock = pygame.time.Clock()
+        self.font=pygame.freetype.SysFont(None, 34)
+        self.font.origin=True
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.screen_rect = self.screen.get_rect()
@@ -27,6 +30,17 @@ class Game:
         self.buttons = Button(self)
 
         self.selected_value = None
+
+        #error indicator
+        self.error_number = False
+        self.source = None
+        self.target = None
+        self.circle_radius = 30
+        self.circle_width = 3
+
+        #clock
+        self.start_timer = True
+        self.ticks = 0
         
 
     def run_game(self):
@@ -45,7 +59,12 @@ class Game:
             #Draw input buttons
             self.buttons.draw_input_buttons()
 
+            #Draw error line
+            if self.error_number:
+                self.draw_error_line(self.source, self.target)
 
+            #clock
+            self.clock_timer()
             self.clock.tick(60)
             pygame.display.flip()
 
@@ -71,7 +90,7 @@ class Game:
             if self.selected_value is not None and self.selected_value < 10 and self.buttons.edit_selected == False:
                 #update number in board
                 self.board.update_board(row, col, self.selected_value)
-            elif self.selected_value < 10 and self.buttons.edit_selected == True:
+            elif self.selected_value is not None and self.selected_value < 10 and self.buttons.edit_selected == True:
                 #Add notes
                 self.board.update_possible(row, col , self.selected_value)
             elif self.selected_value is not None and self.selected_value == 12:
@@ -134,7 +153,19 @@ class Game:
             self.buttons.check_selected=True
             self.selected_value = 13
 
-        
+    def draw_error_line(self, source, target):
+        (row1, col1) = source
+        (row2, col2) = target
+        pygame.draw.circle(self.screen, self.board.number_red_color, (col1* self.board.square_height + self.board.square_height //2, row1* self.board.square_width + self.board.square_width // 2), self.circle_radius, self.circle_width)
+        pygame.draw.circle(self.screen, self.board.number_red_color, (col2* self.board.square_height + self.board.square_height //2, row2* self.board.square_width + self.board.square_width // 2), self.circle_radius, self.circle_width)
+
+    def clock_timer(self):
+        if self.start_timer:
+            self.ticks=pygame.time.get_ticks()
+        seconds=int(self.ticks/1000 % 60)
+        minutes=int(self.ticks/60000 % 24)
+        out='{minutes:02d}:{seconds:02d}'.format(minutes=minutes, seconds=seconds)
+        self.font.render_to(self.screen, (self.board.board_width+50, 50), out, self.board.border_color)
 
 
 if __name__ =='__main__':
