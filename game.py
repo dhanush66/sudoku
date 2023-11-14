@@ -68,12 +68,12 @@ class Game:
         if x <=800 and y <= 800:
             col = x // self.board.square_width
             row = y // self.board.square_width
-            if self.selected_value is not None and self.selected_value < 10:
+            if self.selected_value is not None and self.selected_value < 10 and self.buttons.edit_selected == False:
                 #update number in board
                 self.board.update_board(row, col, self.selected_value)
-            elif self.selected_value is not None and self.selected_value == 11:
+            elif self.selected_value < 10 and self.buttons.edit_selected == True:
                 #Add notes
-                pass
+                self.board.update_possible(row, col , self.selected_value)
             elif self.selected_value is not None and self.selected_value == 12:
                 #delete number in board
                 self.board.delete_number_board(row, col)
@@ -83,45 +83,48 @@ class Game:
         """Check input selected"""
 
         if self.buttons.one_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
+            self.buttons.default_input_properties(self.buttons.edit_selected)
             self.buttons.one_selected=True
             self.selected_value = 1
         elif self.buttons.two_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
+            self.buttons.default_input_properties(self.buttons.edit_selected)
             self.buttons.two_selected=True
             self.selected_value = 2
         elif self.buttons.three_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
+            self.buttons.default_input_properties(self.buttons.edit_selected)
             self.buttons.three_selected=True
             self.selected_value = 3
         elif self.buttons.four_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
+            self.buttons.default_input_properties(self.buttons.edit_selected)
             self.buttons.four_selected=True
             self.selected_value = 4
         elif self.buttons.five_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
+            self.buttons.default_input_properties(self.buttons.edit_selected)
             self.buttons.five_selected=True
             self.selected_value = 5
         elif self.buttons.six_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
+            self.buttons.default_input_properties(self.buttons.edit_selected)
             self.buttons.six_selected=True
             self.selected_value = 6
         elif self.buttons.seven_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
+            self.buttons.default_input_properties(self.buttons.edit_selected)
             self.buttons.seven_selected=True
             self.selected_value = 7
         elif self.buttons.eight_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
+            self.buttons.default_input_properties(self.buttons.edit_selected)
             self.buttons.eight_selected=True
             self.selected_value = 8
         elif self.buttons.nine_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
+            self.buttons.default_input_properties(self.buttons.edit_selected)
             self.buttons.nine_selected=True
             self.selected_value = 9
         elif self.buttons.edit_rect.collidepoint(mouse_pos):
-            self.buttons.default_input_properties()
-            self.buttons.edit_selected=True
-            self.selected_value = 11
+            self.buttons.default_input_properties(self.buttons.edit_selected)
+            if self.buttons.edit_selected:
+                self.buttons.edit_selected = False
+            else:
+                self.buttons.edit_selected=True
+            self.selected_value = None
         elif self.buttons.delete_rect.collidepoint(mouse_pos):
             self.buttons.default_input_properties()
             self.buttons.delete_selected=True

@@ -14,6 +14,8 @@ class Board:
         self.size = 9
         self.square_width = self.board_width //self.size
         self.square_height = self.board_height//self.size
+        self.possible_square_width = self.square_width // 3
+        self.possible_square_height = self.square_height // 3
         self.border_color = (0, 0, 0)
         self.number_color = (74,44,42)
         self.number_green_color = (0,255,0)
@@ -63,7 +65,18 @@ class Board:
 
         for row in range(self.size):
             for col in range(self.size):
-                if self.board[row][col].number:
+                if len(self.board[row][col].possible) > 0:
+                    i=j=1
+                    for val in self.board[row][col].possible:
+                        self.font = Font(val,self.number_color, True)
+                        self.font.number_rect.centerx = (col * self.square_height) + i* self.possible_square_height //2 + (i-1) * 12
+                        self.font.number_rect.centery = (row * self.square_width) + j* self.possible_square_width //2 + (j-1) * 12
+                        self.screen.blit(self.font.number_image, self.font.number_rect)
+                        i +=1
+                        if i==4:
+                            j +=1
+                            i =1
+                elif self.board[row][col].number:
                     if self.board[row][col].editable == False:
                         self.font = Font(self.board[row][col].number,self.number_color)
                     elif self.game.buttons.check_selected:
@@ -84,12 +97,17 @@ class Board:
         if self.board[row][col].editable:
             self.board[row][col].number = val
 
+    def update_possible(self, row, col, val):
+        """Update board with possible"""
+        if self.board[row][col].editable:
+            self.board[row][col].possible.add(val)
 
     def delete_number_board(self, row, col):
         """Delete the number in the board"""
 
         if self.board[row][col].editable:
             self.board[row][col].number = 0
+            self.board[row][col].possible.clear()
 
     def update_result(self):
         """Returns true if borad matches result"""

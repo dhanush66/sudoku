@@ -41,7 +41,7 @@ class Button:
         self.circle_width = 3
 
 
-    def default_input_properties(self):
+    def default_input_properties(self, edit_selected=False):
         #Number selected properties
         self.one_selected = False
         self.two_selected = False
@@ -52,9 +52,13 @@ class Button:
         self.seven_selected = False
         self.eight_selected = False
         self.nine_selected = False
-        self.edit_selected = False
         self.delete_selected = False
         self.check_selected = False
+
+        if edit_selected:
+            pass
+        else:
+            self.edit_selected = False
 
     def draw_input_buttons(self):
         
