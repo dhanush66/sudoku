@@ -1,2 +1,6 @@
 __pycache__/
 __pycache__/board.cpython-311.pyc
+__pycache__/board.cpython-311.pyc
+.gitignore
+__pycache__/font.cpython-311.pyc
+images/sunsetimaginarypersonaluse-almyd.otf

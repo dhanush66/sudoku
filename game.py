@@ -41,6 +41,7 @@ class Game:
         #clock
         self.start_timer = True
         self.ticks = 0
+        self.game_status = False
         
 
     def run_game(self):
@@ -48,23 +49,29 @@ class Game:
 
         while True:
             self.check_event()
-    
             self.screen.fill(self.settings.bg_color)
-            self.rect.fit(self.screen_rect)
-            self.screen.blit(self.image, self.rect)
-            #Draw board
-            self.board.draw_board()
-            self.board.draw_numbers()
+    
 
-            #Draw input buttons
-            self.buttons.draw_input_buttons()
+            if self.game_status:
+                self.rect.fit(self.screen_rect)
+                self.screen.blit(self.image, self.rect)
+                #Draw board
+                self.board.draw_board()
+                self.board.draw_numbers()
 
-            #Draw error line
-            if self.error_number:
-                self.draw_error_line(self.source, self.target)
+                #Draw input buttons
+                self.buttons.draw_input_buttons()
 
-            #clock
-            self.clock_timer()
+                #Draw error line
+                if self.error_number:
+                    self.draw_error_line(self.source, self.target)
+
+                #clock
+                self.clock_timer()
+            else:
+                self.screen.fill(self.settings.bg_color)
+                self.buttons.draw_menu()
+            
             self.clock.tick(60)
             pygame.display.flip()
 
@@ -78,8 +85,16 @@ class Game:
                         sys.exit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
-                    self.check_input(mouse_pos)
+                    if self.game_status:
+                        self.check_input(mouse_pos)
+                    else:
+                        self.check_menu_input(mouse_pos)
     
+    def check_menu_input(self, mouse_pos):
+        """Check menu option selected"""
+
+        pass
+
     def check_input(self,mouse_pos):
         self.check_input_buttons(mouse_pos)
         x, y = mouse_pos

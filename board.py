@@ -69,7 +69,7 @@ class Board:
                 if len(self.board[row][col].possible) > 0:
                     i=j=1
                     for val in self.board[row][col].possible:
-                        self.font = Font(val,self.border_color, True)
+                        self.font = Font(val,self.border_color, 1)
                         self.font.number_rect.centerx = (col * self.square_height) + i* self.possible_square_height //2 + (i-1) * 12
                         self.font.number_rect.centery = (row * self.square_width) + j* self.possible_square_width //2 + (j-1) * 12
                         self.screen.blit(self.font.number_image, self.font.number_rect)
@@ -80,19 +80,19 @@ class Board:
                 #Draw game numbers
                 elif self.board[row][col].number:
                     if self.board[row][col].editable == False and self.board[row][col].number == self.game.selected_value:
-                        self.font = Font(self.board[row][col].number,self.game.buttons.circle_selected_color)
+                        self.font = Font(self.board[row][col].number,self.game.buttons.circle_selected_color, 2)
                     elif self.board[row][col].editable == False:
-                        self.font = Font(self.board[row][col].number,self.number_color)
+                        self.font = Font(self.board[row][col].number,self.number_color, 2)
                     elif self.game.buttons.check_selected:
                         if self.sd.result[row][col] == self.board[row][col].number:
-                            self.font = Font(self.board[row][col].number,self.number_green_color)
+                            self.font = Font(self.board[row][col].number,self.number_green_color, 2)
                         else:
-                            self.font = Font(self.board[row][col].number,self.number_red_color)
+                            self.font = Font(self.board[row][col].number,self.number_red_color, 2)
                     # draw user numbers
                     elif self.board[row][col].number == self.game.selected_value:
-                        self.font = Font(self.board[row][col].number,self.game.buttons.circle_selected_color)
+                        self.font = Font(self.board[row][col].number,self.game.buttons.circle_selected_color, 2)
                     else:
-                        self.font = Font(self.board[row][col].number,self.border_color)
+                        self.font = Font(self.board[row][col].number,self.border_color, 2)
                     self.font.number_rect.centerx = (col * self.square_height) + self.square_height//2
                     self.font.number_rect.centery = (row * self.square_width) + self.square_width//2
                     self.screen.blit(self.font.number_image, self.font.number_rect)

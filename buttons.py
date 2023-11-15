@@ -1,11 +1,14 @@
 import pygame
 
+from font import Font
+
 
 class Button:
     """Create input buttons"""
     def __init__(self, game):
         self.board =game.board
         self.screen = game.screen
+        self.settings = game.settings
         #Input images and rect
         self.one_image = pygame.image.load('images/inputs/digit-1.png')
         self.two_image = pygame.image.load('images/inputs/digit-2.png')
@@ -19,6 +22,8 @@ class Button:
         self.edit_image = pygame.image.load('images/inputs/edit.png')
         self.delete_image = pygame.image.load('images/inputs/stick-cross.png')
         self.check_image = pygame.image.load('images/inputs/stick-check.png')
+        self.fwd_arrow_image = pygame.image.load('images/inputs/arrow-block.png')
+        self.bck_arrow_image = pygame.transform.rotate(self.fwd_arrow_image, 180)
         self.one_rect = self.one_image.get_rect()
         self.two_rect = self.two_image.get_rect()
         self.three_rect = self.three_image.get_rect()
@@ -31,6 +36,8 @@ class Button:
         self.edit_rect = self.edit_image.get_rect()
         self.delete_rect = self.delete_image.get_rect()
         self.check_rect = self.check_image.get_rect()
+        self.fwd_arrow_rect = self.fwd_arrow_image.get_rect()
+        self.bck_arrow_rect = self.bck_arrow_image.get_rect()
         self.default_image_size = (50,50)
         
         self.default_input_properties()
@@ -39,6 +46,12 @@ class Button:
         self.circle_selected_color = (255, 255, 0)
         self.cricle_radius = 30
         self.circle_width = 3
+        #Menu properties
+        self.game_heading_color = (0,0,0)
+        self.box_color = (0,0,0)
+        self.box_selected_color = (33,33,33)
+        self.diff_selected = False
+        self.game_no_selected = False
 
 
     def default_input_properties(self, edit_selected=False):
@@ -151,7 +164,71 @@ class Button:
             pygame.draw.circle(self.screen, self.circle_color, (self.board.board_width + 5 + self.cricle_radius +(1*self.board.square_width-15), (self.board.square_height * 6)+ 10 + self.cricle_radius), self.cricle_radius, self.circle_width)
         self.screen.blit(pygame.transform.scale(self.delete_image, self.default_image_size), self.delete_rect)
 
-        #Draw number nine
+        #Draw check nine
         self.check_rect.topleft = (self.board.board_width + 10 + (2*self.board.square_width-30), (self.board.square_height * 6)+ 10)
         pygame.draw.circle(self.screen, self.circle_color, (self.board.board_width + 5 + self.cricle_radius +(2*self.board.square_width)-30, (self.board.square_height * 6)+ 10 + self.cricle_radius), self.cricle_radius, self.circle_width)
         self.screen.blit(pygame.transform.scale(self.check_image, self.default_image_size), self.check_rect)
+
+
+    def draw_menu(self):
+        #title
+        font = Font("Sudoku",self.game_heading_color, 3)
+        font.number_rect.centerx = self.settings.screen_width // 2
+        font.number_rect.centery = 100
+        self.screen.blit(font.number_image, font.number_rect)
+        #options
+
+        #Draw difficulty   
+        self.bck_arrow_rect.centerx = self.settings.screen_width // 2 + 10
+        self.bck_arrow_rect.centery = 335
+        self.fwd_arrow_rect.centerx = self.settings.screen_width // 2 + 50 + 170
+        self.fwd_arrow_rect.centery = 335
+        if self.diff_selected:
+            pygame.draw.circle(self.screen, self.box_selected_color, (self.bck_arrow_rect.centerx-5, self.bck_arrow_rect.centery -5), self.cricle_radius, self.circle_width)
+            pygame.draw.rect(self.screen, self.box_selected_color, [self.settings.screen_width // 2 + 50, 300, 120, 60], 5, border_radius=15)
+            pygame.draw.circle(self.screen, self.box_selected_color, (self.fwd_arrow_rect.centerx-5, self.fwd_arrow_rect.centery -5), self.cricle_radius, self.circle_width)
+        else:
+            pygame.draw.circle(self.screen, self.box_color, (self.bck_arrow_rect.centerx-5, self.bck_arrow_rect.centery-5), self.cricle_radius, self.circle_width)
+            pygame.draw.rect(self.screen, self.box_color, [self.settings.screen_width // 2 + 50, 300, 120, 60], 5, border_radius=15)
+            pygame.draw.circle(self.screen, self.box_color, (self.fwd_arrow_rect.centerx-5, self.fwd_arrow_rect.centery -5), self.cricle_radius, self.circle_width)
+        font = Font("Easy",self.game_heading_color, 2)
+        font.number_rect.centerx = self.settings.screen_width // 2 +55 + 60
+        font.number_rect.centery = 330
+        self.screen.blit(font.number_image, font.number_rect)
+        self.screen.blit(pygame.transform.scale(self.bck_arrow_image, self.default_image_size), self.bck_arrow_rect)
+        self.screen.blit(pygame.transform.scale(self.fwd_arrow_image, self.default_image_size), self.fwd_arrow_rect)
+        font = Font("Difficultiy",self.game_heading_color, 2)
+        font.number_rect.centerx = self.settings.screen_width // 2 -200
+        font.number_rect.centery = 330
+        self.screen.blit(font.number_image, font.number_rect)
+
+        #Draw Game Number   
+        self.bck_arrow_rect.centerx = self.settings.screen_width // 2 + 10
+        self.bck_arrow_rect.centery = 435
+        self.fwd_arrow_rect.centerx = self.settings.screen_width // 2 + 50 + 170
+        self.fwd_arrow_rect.centery = 435
+        if self.game_no_selected:
+            pygame.draw.circle(self.screen, self.box_selected_color, (self.bck_arrow_rect.centerx-5, self.bck_arrow_rect.centery -5), self.cricle_radius, self.circle_width)
+            pygame.draw.rect(self.screen, self.box_selected_color, [self.settings.screen_width // 2 + 50, 400, 120, 60], 5, border_radius=15)
+            pygame.draw.circle(self.screen, self.box_selected_color, (self.fwd_arrow_rect.centerx-5, self.fwd_arrow_rect.centery -5), self.cricle_radius, self.circle_width)
+        else:
+            pygame.draw.circle(self.screen, self.box_color, (self.bck_arrow_rect.centerx-5, self.bck_arrow_rect.centery-5), self.cricle_radius, self.circle_width)
+            pygame.draw.rect(self.screen, self.box_color, [self.settings.screen_width // 2 + 50, 400, 120, 60], 5, border_radius=15)
+            pygame.draw.circle(self.screen, self.box_color, (self.fwd_arrow_rect.centerx-5, self.fwd_arrow_rect.centery -5), self.cricle_radius, self.circle_width)
+        font = Font("1",self.game_heading_color, 2)
+        font.number_rect.centerx = self.settings.screen_width // 2 +55 + 50
+        font.number_rect.centery = 430
+        self.screen.blit(font.number_image, font.number_rect)
+        self.screen.blit(pygame.transform.scale(self.bck_arrow_image, self.default_image_size), self.bck_arrow_rect)
+        self.screen.blit(pygame.transform.scale(self.fwd_arrow_image, self.default_image_size), self.fwd_arrow_rect)
+        font = Font("Game No",self.game_heading_color, 2)
+        font.number_rect.centerx = self.settings.screen_width // 2 -200
+        font.number_rect.centery = 430
+        self.screen.blit(font.number_image, font.number_rect)
+
+        #Draw start button
+        pygame.draw.rect(self.screen, self.box_color, [self.settings.screen_width // 2 + 50, 500, 120, 60], 5, border_radius=15)
+        font = Font("Start",self.game_heading_color, 2)
+        font.number_rect.centerx = self.settings.screen_width // 2 +55 + 50
+        font.number_rect.centery = 530
+        self.screen.blit(font.number_image, font.number_rect)
