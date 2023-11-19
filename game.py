@@ -22,6 +22,15 @@ class Game:
         self.image = pygame.image.load('images/seamless.jpg')
         self.rect = self.image.get_rect()
         # self.rect.midbottom = self.screen_rect.midbottom
+
+        #menu
+        self.difficulty = 0
+        self.game_no = 0
+
+        #clock
+        self.start_timer = True
+        self.ticks = 0
+        self.game_status = False
         
         #Board
         self.board = Board(self)
@@ -38,15 +47,11 @@ class Game:
         self.circle_radius = 30
         self.circle_width = 3
 
-        #clock
-        self.start_timer = True
-        self.ticks = 0
-        self.game_status = False
         
 
     def run_game(self):
         """Start the game"""
-
+        self.board.create_board()
         while True:
             self.check_event()
             self.screen.fill(self.settings.bg_color)
@@ -93,7 +98,25 @@ class Game:
     def check_menu_input(self, mouse_pos):
         """Check menu option selected"""
 
-        pass
+        if self.buttons.diff_bck_arrow_rect.collidepoint(mouse_pos):
+            self.difficulty -=1
+        elif self.buttons.diff_fwd_arrow_rect.collidepoint(mouse_pos):
+            self.difficulty +=1
+        elif self.buttons.no_bck_arrow_rect.collidepoint(mouse_pos):
+            self.game_no -=1
+        elif self.buttons.no_fwd_arrow_rect.collidepoint(mouse_pos):
+            self.game_no +=1
+        elif self.buttons.start.number_rect.collidepoint(mouse_pos):
+            self.game_status = True
+
+        if self.difficulty < 0:
+            self.difficulty =0
+        if self.difficulty > 2:
+            self.difficulty = 2
+        if self.game_no < 0:
+            self.game_no = 0
+        if self.game_no > 1:
+            self.game_no =1
 
     def check_input(self,mouse_pos):
         self.check_input_buttons(mouse_pos)

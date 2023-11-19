@@ -24,13 +24,15 @@ class Board:
         self.screen = game.screen
         self.settings = game.settings
         self.game = game
-        self.sudoku = data
+        self.sudoku = data[game.difficulty][game.game_no]
 
         self.board = []
         self.sd = Sd()
-        self.create_board()
+        self.sd.result = self.sudoku
+        if self.game.game_status: 
+            self.create_board()
 
-        self.sd.play()
+            self.sd.play()
 
     def draw_board(self):
         """Draw border of board"""
