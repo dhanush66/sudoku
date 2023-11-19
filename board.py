@@ -221,3 +221,18 @@ class Board:
             self.game.error_number = True
         else:
             self.game.error_number = False
+
+    def create_current_board(self):
+        """Create 2D arrary with current board numbers"""
+        temp = []
+        for i in range(self.size):
+            temp.append([])
+            for j in range(self.size):
+                temp[i].append(self.board[i][j].number)
+
+        return temp
+
+    def get_hint(self):
+        test = Sd()
+        test.result = self.create_current_board()
+        print(test.check_next())

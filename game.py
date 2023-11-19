@@ -60,7 +60,6 @@ class Game:
                 #create board
                 if self.board_created == False:
                     self.board.create_board_play(self)
-                    self.start_timer = True
                     self.board_created = True
 
                 self.rect.fit(self.screen_rect)
@@ -75,6 +74,7 @@ class Game:
                 #Draw error line
                 if self.error_number:
                     self.draw_error_line(self.source, self.target)
+
 
                 #clock
                 self.clock_timer()
@@ -113,6 +113,8 @@ class Game:
             self.game_no +=1
         elif self.buttons.start.number_rect.collidepoint(mouse_pos):
             self.game_status = True
+            self.start_timer = True
+            self.prev_ticks = pygame.time.get_ticks()
 
         if self.difficulty < 0:
             self.difficulty =0
@@ -200,6 +202,12 @@ class Game:
             self.start_timer = False
             self.board_created = False
             self.prev_ticks = pygame.time.get_ticks()
+        elif self.buttons.hint.number_rect.collidepoint(mouse_pos):
+            if self.buttons.hint_selected:
+                self.buttons.hint_selected = False
+            else:
+                self.buttons.hint_selected=True
+            self.board.get_hint()
 
     def draw_error_line(self, source, target):
         (row1, col1) = source

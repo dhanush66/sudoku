@@ -56,6 +56,7 @@ class Button:
         self.box_color = (0,0,0)
         self.start = None
         self.menu = None
+        self.hint = None
 
 
     def default_input_properties(self, edit_selected=False):
@@ -71,6 +72,7 @@ class Button:
         self.nine_selected = False
         self.delete_selected = False
         self.check_selected = False
+        self.hint_selected = False
 
         if edit_selected:
             pass
@@ -78,14 +80,6 @@ class Button:
             self.edit_selected = False
 
     def draw_input_buttons(self):
-
-        #Draw Menu button
-        pygame.draw.rect(self.screen, self.box_color, [self.board.board_width+ 50, self.board.square_height * 9, 140, 60], 5, border_radius=15)
-        self.menu = Font("Menu",self.game_heading_color, 2)
-        self.menu.number_rect.centerx = self.board.board_width +55 + 60
-        self.menu.number_rect.centery = self.board.square_height * 9 + 30
-        self.screen.blit(self.menu.number_image, self.menu.number_rect)
-
         
         #Draw number one
         self.one_rect.topleft =(self.board.board_width + 10, (self.board.square_height * 3)+ 10)
@@ -180,6 +174,27 @@ class Button:
         self.check_rect.topleft = (self.board.board_width + 10 + (2*self.board.square_width-30), (self.board.square_height * 6)+ 10)
         pygame.draw.circle(self.screen, self.circle_color, (self.board.board_width + 5 + self.cricle_radius +(2*self.board.square_width)-30, (self.board.square_height * 6)+ 10 + self.cricle_radius), self.cricle_radius, self.circle_width)
         self.screen.blit(pygame.transform.scale(self.check_image, self.default_image_size), self.check_rect)
+
+        #Draw Menu button
+        pygame.draw.rect(self.screen, self.box_color, [self.board.board_width+ 50, self.board.square_height * 9, 140, 60], 5, border_radius=15)
+        self.menu = Font("Menu",self.game_heading_color, 2)
+        self.menu.number_rect.centerx = self.board.board_width +55 + 60
+        self.menu.number_rect.centery = self.board.square_height * 9 + 30
+        self.screen.blit(self.menu.number_image, self.menu.number_rect)
+
+        #Draw Hint button
+        if self.hint_selected:
+            pygame.draw.rect(self.screen, self.circle_selected_color, [self.board.board_width+ 50, (self.board.square_height * 9) - 80, 140, 60], 5, border_radius=15)
+        else:
+            pygame.draw.rect(self.screen, self.box_color, [self.board.board_width+ 50, (self.board.square_height * 9) - 80, 140, 60], 5, border_radius=15)
+        self.hint = Font("Hint",self.game_heading_color, 2)
+        self.hint.number_rect.centerx = self.board.board_width +55 + 60
+        self.hint.number_rect.centery = (self.board.square_height * 9) - 80 + 30
+        self.screen.blit(self.hint.number_image, self.hint.number_rect)
+
+        #Show hint
+        if self.hint_selected:
+            pass
 
 
     def draw_menu(self):
