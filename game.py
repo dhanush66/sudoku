@@ -30,15 +30,8 @@ class Game:
         #clock
         self.start_timer = True
         self.ticks = 0
+        self.prev_ticks = 0
         self.game_status = False
-        
-        #Board
-        self.board = Board(self)
-
-        #buttons
-        self.buttons = Button(self)
-
-        self.selected_value = None
 
         #error indicator
         self.error_number = False
@@ -46,18 +39,30 @@ class Game:
         self.target = None
         self.circle_radius = 30
         self.circle_width = 3
+        
+        #Board
+        self.board_created = False
+        self.board = Board(self)
 
+        #buttons
+        self.selected_value = None
+        self.buttons = Button(self)
         
 
     def run_game(self):
         """Start the game"""
-        self.board.create_board()
         while True:
             self.check_event()
             self.screen.fill(self.settings.bg_color)
     
 
             if self.game_status:
+                #create board
+                if self.board_created == False:
+                    self.board.create_board_play(self)
+                    self.start_timer = True
+                    self.board_created = True
+
                 self.rect.fit(self.screen_rect)
                 self.screen.blit(self.image, self.rect)
                 #Draw board
@@ -190,6 +195,11 @@ class Game:
             self.buttons.default_input_properties()
             self.buttons.check_selected=True
             self.selected_value = 13
+        elif self.buttons.menu.number_rect.collidepoint(mouse_pos):
+            self.game_status = False
+            self.start_timer = False
+            self.board_created = False
+            self.prev_ticks = pygame.time.get_ticks()
 
     def draw_error_line(self, source, target):
         (row1, col1) = source
@@ -200,6 +210,7 @@ class Game:
     def clock_timer(self):
         if self.start_timer:
             self.ticks=pygame.time.get_ticks()
+            self.ticks -= self.prev_ticks
         seconds=int(self.ticks/1000 % 60)
         minutes=int(self.ticks/60000 % 24)
         out='{minutes:02d}:{seconds:02d}'.format(minutes=minutes, seconds=seconds)

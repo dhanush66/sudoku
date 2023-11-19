@@ -55,6 +55,7 @@ class Button:
         self.game_heading_color = (0,0,0)
         self.box_color = (0,0,0)
         self.start = None
+        self.menu = None
 
 
     def default_input_properties(self, edit_selected=False):
@@ -77,6 +78,14 @@ class Button:
             self.edit_selected = False
 
     def draw_input_buttons(self):
+
+        #Draw Menu button
+        pygame.draw.rect(self.screen, self.box_color, [self.board.board_width+ 50, self.board.square_height * 9, 140, 60], 5, border_radius=15)
+        self.menu = Font("Menu",self.game_heading_color, 2)
+        self.menu.number_rect.centerx = self.board.board_width +55 + 60
+        self.menu.number_rect.centery = self.board.square_height * 9 + 30
+        self.screen.blit(self.menu.number_image, self.menu.number_rect)
+
         
         #Draw number one
         self.one_rect.topleft =(self.board.board_width + 10, (self.board.square_height * 3)+ 10)

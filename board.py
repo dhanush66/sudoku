@@ -1,4 +1,5 @@
 import pygame
+import copy
 
 from tiles import Tiles
 from font import Font
@@ -24,15 +25,18 @@ class Board:
         self.screen = game.screen
         self.settings = game.settings
         self.game = game
-        self.sudoku = data[game.difficulty][game.game_no]
+
+
+    def create_board_play(self, game):
+        """Create board from selected difficulty and game no and solve the sudoku using play method"""
+        self.sudoku = copy.deepcopy(data[game.difficulty][game.game_no])
 
         self.board = []
         self.sd = Sd()
         self.sd.result = self.sudoku
-        if self.game.game_status: 
-            self.create_board()
 
-            self.sd.play()
+        self.create_board()
+        self.sd.play()
 
     def draw_board(self):
         """Draw border of board"""
@@ -85,6 +89,8 @@ class Board:
                         self.font = Font(self.board[row][col].number,self.game.buttons.circle_selected_color, 2)
                     elif self.board[row][col].editable == False:
                         self.font = Font(self.board[row][col].number,self.number_color, 2)
+                    elif self.game.start_timer == False:
+                        self.font = Font(self.board[row][col].number,self.number_green_color, 2)
                     elif self.game.buttons.check_selected:
                         if self.sd.result[row][col] == self.board[row][col].number:
                             self.font = Font(self.board[row][col].number,self.number_green_color, 2)
@@ -205,17 +211,13 @@ class Board:
             self.game.target= self.check_row(row, col)
             self.game.source= (row,col)
             self.game.error_number = True
-            print("row",self.check_row(row, col), row,col)
         elif self.check_column(row, col) != False:
             self.game.target= self.check_column(row, col)
             self.game.source= (row,col)
             self.game.error_number = True
-            print("col")
         elif self.check_square(row, col) != False:
             self.game.target= self.check_square(row, col)
             self.game.source= (row,col)
             self.game.error_number = True
-            print("square")
         else:
             self.game.error_number = False
-            print("else")
