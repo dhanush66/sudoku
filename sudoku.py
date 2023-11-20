@@ -156,7 +156,7 @@ class Sd:
                 self.add_possible_grid(a,col)
                 self.possible[a][col].clear()
                 if check_next:
-                    return f"Hidden single in row{a},column{col} with value of {valueRow}"
+                    return f"Hidden single in row{a+1},column{col+1} with value of {valueRow} "
 
     def check_possible_with_col(self, b, a=0, check_next=False):
         #E.g  board [6, possible  [[],      index  [0,      
@@ -188,7 +188,7 @@ class Sd:
                 self.add_possible_grid(row,b)
                 self.possible[row][b].clear()
                 if check_next:
-                    return f"Hidden single in row{row},column{b} with value of {valueCol}"
+                    return f"Hidden single in row{row+1},column{b+1} with value of {valueCol} "
 
     def is_in_other_rows_of_grid(self,a,val,square):
         for i in range((a//3)*3, (a//3*3)+3):
@@ -244,7 +244,7 @@ class Sd:
                 else:
                     self.add_possible_other_row(a,val,square)
                     if check_next:
-                        return f"There is intersection caliming in row {a} in square {square}. with value of {val}"
+                        return f"There is intersection in row {a+1} in square {square+1}. with value of {val} "
             row1.clear()
 
     def check_intersection_col(self,b, check_next= False):
@@ -268,7 +268,7 @@ class Sd:
                 else:
                     self.add_possible_other_col(b,val,square)
                     if check_next:
-                        return f"There is intersection claiming available in col{b} in square {square} with value of {val}"
+                        return f"There is intersection claiming available in col{b+1} in square {square+1} with value of {val} "
             col1.clear()
 
 
@@ -345,7 +345,7 @@ class Sd:
                                 if self.possible[i][col1][0] == self.possible[i][col2][0] and self.possible[i][col1][1]==self.possible[i][col2][1]: # check row pair
                                     self.add_possible_except_pair_row(i, col1, col2)
                                     if check_next:
-                                        return f"Naked pair in row {i} and values{self.possible[i][col1]}"
+                                        return f"Naked pair in row {i+1} and values{self.possible[i][col1]} "
                     
             rowPair.clear()
 
@@ -360,7 +360,7 @@ class Sd:
                             if self.possible[row1][j][0] == self.possible[row2][j][0] and self.possible[row1][j][1] == self.possible[row2][j][1]:
                                 self.add_possible_except_pair_col(j,row1,row2)
                                 if check_next:
-                                        return f"Naked pair in col {j} and values{self.possible[row2][j]}"
+                                        return f"Naked pair in col {j+1} and values{self.possible[row2][j]} "
                    
             colPair.clear()         
 
@@ -415,7 +415,7 @@ class Sd:
                                     if self.check_pos_in_same_grid(col1,col3):
                                         self.add_possible_grid_interscetion_claiming_row(val,i,col1,col3)
                                         if check_next:
-                                            return f"Intersection claiming in row {i}, cols {col1}, {col2}"
+                                            return f"Intersection claiming in row {i+1}, cols {col1+1}, {col2+1} "
 
             row.clear()
 
@@ -437,7 +437,7 @@ class Sd:
                                     if self.check_pos_in_same_grid(row1,row3):
                                         self.add_possible_grid_interscetion_claiming_col(val,j,row1,row3)
                                         if check_next:
-                                            return f"Intersection claiming in col {j}, rows {row1}, {row3} "
+                                            return f"Intersection claiming in col {j+1}, rows {row1+1}, {row3+1} "
             col.clear()
 
     def fact(self, n):
@@ -777,7 +777,7 @@ class Sd:
                             if self.is_naked_triple_square(sq,DoubleList):
                                 self.add_possible_naked_triple_square(a,b,sq,DoubleList)
                                 if check_next:
-                                    return f"Naked triple in sq {sq}, row {a}, col {b}, double list{DoubleList}"
+                                    return f"Naked triple in sq {sq+1}, row {a+1}, col {b+1}, double list{DoubleList} "
                             DoubleList.clear()
                         TripleList.clear()
                     elif len(sqPoss) ==3:
@@ -785,7 +785,7 @@ class Sd:
                         if self.is_naked_triple_square(sq,DoubleList):
                                 self.add_possible_naked_triple_square(a,b,sq,DoubleList)
                                 if check_next:
-                                    return f"Naked triple in sq {sq}, row {a}, col {b}, double list{DoubleList}"
+                                    return f"Naked triple in sq {sq+1}, row {a+1}, col {b+1}, double list{DoubleList} "
                         DoubleList.clear()        
             sqPoss.clear()
 
@@ -817,7 +817,7 @@ class Sd:
                             if self.is_naked_triple_row(a,row,DoubleList):
                                 self.add_possible_naked_triple_row(a,row,DoubleList)
                                 if check_next:
-                                    return f"Naked triple in row {a}, col {row}, combination {DoubleList}"
+                                    return f"Naked triple in row {a+1}, col {row+1}, combination {DoubleList} "
                             DoubleList.clear()
                         TripleList.clear()
                     elif len(rowPoss) ==3:
@@ -825,7 +825,7 @@ class Sd:
                         if self.is_naked_triple_row(a,row,DoubleList):
                                 self.add_possible_naked_triple_row(a,row,DoubleList)
                                 if check_next:
-                                    return f"Naked triple in row {a}, col {row}, combination {DoubleList}"
+                                    return f"Naked triple in row {a+1}, col {row+1}, combination {DoubleList} "
                         DoubleList.clear()        
             rowPoss.clear()
             
@@ -850,7 +850,7 @@ class Sd:
                             if self.is_naked_triple_col(b,col,DoubleList):
                                 self.add_possible_naked_triple_col(b,col,DoubleList)
                                 if check_next:
-                                    return f"Naked triple in col {b}, row {col}, combination {DoubleList}"
+                                    return f"Naked triple in col {b+1}, row {col+1}, combination {DoubleList} "
                             DoubleList.clear()
                         TripleList.clear()
                     elif len(colPoss) ==3:
@@ -858,7 +858,7 @@ class Sd:
                         if self.is_naked_triple_col(b,col,DoubleList):
                                 self.add_possible_naked_triple_col(b,col,DoubleList)
                                 if check_next:
-                                    return f"Naked triple in col {b}, row {col}, combination {DoubleList}"
+                                    return f"Naked triple in col {b+1}, row {col+1}, combination {DoubleList} "
                         DoubleList.clear()        
             colPoss.clear()
 
@@ -911,7 +911,7 @@ class Sd:
                 self.add_possible_grid(i,j)
                 self.possible[i][j].clear()
                 if check_next:
-                    return f"Hidden single in square contains row {i}, column {j}. with value of {val}"
+                    return f"Hidden single in square contains row {i+1}, column {j+1}. with value of {val} "
     
 
     def check_possible_square(self, check_next=False):
@@ -944,7 +944,7 @@ class Sd:
                         self.add_possible_grid(i,j)
                         self.possible[i][j].clear()
                         if check_next:
-                            return f"There is only one possible value in row {i}, column {j}. with value of {val}"
+                            return f"There is only one possible value in row {i+1}, column {j+1}. with value of {val} "
 
 
                 
@@ -968,23 +968,6 @@ class Sd:
                 break
             
 
-    def check_next(self):
-        """This function returns hint"""
-        self.add_possible()
-        if self.add_values(True):
-            return self.add_values(True)
-        if self.check_possible(True) != None:
-            return self.check_possible(True)   
-        if self.check_possible_square(True) != None:
-            return self.check_possible_square(True)
-        if self.check_intersection(True) != None:
-            return self.check_intersection(True)
-        if self.check_naked_pair(True) != None:
-            return self.check_naked_pair(True)
-        if self.check_intersection_claiming(True) != None:
-            return self.check_intersection_claiming(True)
-        if self.check_naked_triple(True) != None:
-            return self.check_naked_triple(True)
 
 if __name__ == "__main__":
     player = Sd()

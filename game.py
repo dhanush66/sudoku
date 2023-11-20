@@ -37,8 +37,11 @@ class Game:
         self.error_number = False
         self.source = None
         self.target = None
-        self.circle_radius = 30
+        self.circle_radius = 20
         self.circle_width = 3
+
+        #stores hint messages
+        self.hint_message = None
         
         #Board
         self.board_created = False
@@ -71,7 +74,7 @@ class Game:
                 #Draw input buttons
                 self.buttons.draw_input_buttons()
 
-                #Draw error line
+                #Draw error line if same no available in same row, column and square
                 if self.error_number:
                     self.draw_error_line(self.source, self.target)
 
@@ -118,18 +121,18 @@ class Game:
 
         if self.difficulty < 0:
             self.difficulty =0
-        if self.difficulty > 2:
-            self.difficulty = 2
+        if self.difficulty > 3:
+            self.difficulty = 3
         if self.game_no < 0:
             self.game_no = 0
-        if self.game_no > 1:
-            self.game_no =1
+        if self.game_no > 9:
+            self.game_no =9
 
     def check_input(self,mouse_pos):
         self.check_input_buttons(mouse_pos)
         x, y = mouse_pos
 
-        if x <=800 and y <= 800:
+        if x <=self.board.board_width and y <= self.board.board_height:
             col = x // self.board.square_width
             row = y // self.board.square_width
             if self.selected_value is not None and self.selected_value < 10 and self.buttons.edit_selected == False:
@@ -203,11 +206,15 @@ class Game:
             self.board_created = False
             self.prev_ticks = pygame.time.get_ticks()
         elif self.buttons.hint.number_rect.collidepoint(mouse_pos):
+            # store the hint message
+            self.hint_message = self.board.get_hint()
             if self.buttons.hint_selected:
                 self.buttons.hint_selected = False
+                self.hint_message = None
             else:
                 self.buttons.hint_selected=True
-            self.board.get_hint()
+        elif self.buttons.possible.number_rect.collidepoint(mouse_pos):
+            self.board.get_possible()
 
     def draw_error_line(self, source, target):
         (row1, col1) = source

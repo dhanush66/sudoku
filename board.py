@@ -10,8 +10,8 @@ from data import data
 class Board:
     def __init__(self, game):
         #Board parameters
-        self.board_width = 800
-        self.board_height = 800
+        self.board_width = 500
+        self.board_height = 500
         self.size = 9
         self.square_width = self.board_width //self.size
         self.square_height = self.board_height//self.size
@@ -21,7 +21,7 @@ class Board:
         self.number_color = (74,44,42)
         self.number_green_color = (0,255,0)
         self.number_red_color = (255,0,0)
-        self.trim_size =9
+        self.trim_size =5
         self.screen = game.screen
         self.settings = game.settings
         self.game = game
@@ -124,7 +124,10 @@ class Board:
     def update_possible(self, row, col, val):
         """Update board with possible"""
         if self.board[row][col].editable and self.game.error_number == False and self.board[row][col].number == 0:
-            self.board[row][col].possible.add(val)
+            if val in self.board[row][col].possible:
+                self.board[row][col].possible.remove(val)
+            else:
+                self.board[row][col].possible.add(val)
 
     def delete_number_board(self, row, col):
         """Delete the number in the board"""
@@ -233,6 +236,47 @@ class Board:
         return temp
 
     def get_hint(self):
-        test = Sd()
-        test.result = self.create_current_board()
-        print(test.check_next())
+        hint_sudoku = Sd()
+        hint_sudoku.result = self.create_current_board()
+        hint_sudoku.add_possible()
+        if hint_sudoku.add_values(True) != None:
+            hint_1 = Sd()
+            hint_1.result = self.create_current_board()
+            hint_1.add_possible()
+            return hint_1.add_values(True)
+        if hint_sudoku.check_possible(True) != None:
+            hint_1 = Sd()
+            hint_1.result = self.create_current_board()
+            hint_1.add_possible()
+            return hint_1.check_possible(True)
+        if hint_sudoku.check_intersection(True) != None:
+            hint_1 = Sd()
+            hint_1.result = self.create_current_board()
+            hint_1.add_possible()
+            return hint_1.check_intersection(True)
+        if hint_sudoku.check_naked_pair(True) != None:
+            hint_1 = Sd()
+            hint_1.result = self.create_current_board()
+            hint_1.add_possible()
+            return hint_1.check_naked_pair(True)
+        if hint_sudoku.check_intersection_claiming(True) != None:
+            hint_1 = Sd()
+            hint_1.result = self.create_current_board()
+            hint_1.add_possible()
+            return hint_sudoku.check_intersection_claiming(True)
+        if hint_sudoku.check_naked_triple(True) != None:
+            hint_1 = Sd()
+            hint_1.result = self.create_current_board()
+            hint_1.add_possible()
+            return hint_1.check_naked_triple(True)
+    
+    def get_possible(self):
+        possible_sudoku = Sd()
+        possible_sudoku.result = self.create_current_board()
+        possible_sudoku.add_possible()
+
+        for i in range(9):
+            for j in range(9):
+                if self.board[i][j].number == 0:
+                    for val in possible_sudoku.possible[i][j]:
+                        self.board[i][j].possible.add(val)
