@@ -25,6 +25,7 @@ class Board:
         self.screen = game.screen
         self.settings = game.settings
         self.game = game
+        self.hint_sudoku = None
 
 
     def create_board_play(self, game):
@@ -37,6 +38,9 @@ class Board:
 
         self.create_board()
         self.sd.play()
+
+        self.hint_sudoku = Sd()
+        self.hint_sudoku = self.create_current_board()
 
     def draw_board(self):
         """Draw border of board"""
@@ -226,57 +230,49 @@ class Board:
             self.game.error_number = False
 
     def create_current_board(self):
-        """Create 2D arrary with current board numbers"""
-        temp = []
+        """Create sd object with current board numbers and possibles"""
+        temp = Sd()
+        temp.result = []
         for i in range(self.size):
-            temp.append([])
+            temp.result.append([])
             for j in range(self.size):
-                temp[i].append(self.board[i][j].number)
-
+                if self.board[i][j].number:
+                    temp.result[i].append(self.board[i][j].number)
+                    temp.possible[i][j].clear()
+                else:
+                    temp.result[i].append(0)
+                    if self.game.possible_added == True:
+                        temp.possible[i][j].clear()
+                        for val in self.board[i][j].possible:
+                            temp.possible[i][j].append(val)
         return temp
 
     def get_hint(self):
-        hint_sudoku = Sd()
-        hint_sudoku.result = self.create_current_board()
-        hint_sudoku.add_possible()
-        if hint_sudoku.add_values(True) != None:
-            hint_1 = Sd()
-            hint_1.result = self.create_current_board()
-            hint_1.add_possible()
-            return hint_1.add_values(True)
-        if hint_sudoku.check_possible(True) != None:
-            hint_1 = Sd()
-            hint_1.result = self.create_current_board()
-            hint_1.add_possible()
-            return hint_1.check_possible(True)
-        if hint_sudoku.check_intersection(True) != None:
-            hint_1 = Sd()
-            hint_1.result = self.create_current_board()
-            hint_1.add_possible()
-            return hint_1.check_intersection(True)
-        if hint_sudoku.check_naked_pair(True) != None:
-            hint_1 = Sd()
-            hint_1.result = self.create_current_board()
-            hint_1.add_possible()
-            return hint_1.check_naked_pair(True)
-        if hint_sudoku.check_intersection_claiming(True) != None:
-            hint_1 = Sd()
-            hint_1.result = self.create_current_board()
-            hint_1.add_possible()
-            return hint_sudoku.check_intersection_claiming(True)
-        if hint_sudoku.check_naked_triple(True) != None:
-            hint_1 = Sd()
-            hint_1.result = self.create_current_board()
-            hint_1.add_possible()
-            return hint_1.check_naked_triple(True)
+
+        if self.hint_sudoku.add_values(True, True) != None:
+            return self.hint_sudoku.add_values(True)
+        if self.hint_sudoku.check_possible(True, True) != None:
+            return self.hint_sudoku.check_possible(True)
+        if self.hint_sudoku.check_intersection(True, True) != None:
+            return self.hint_sudoku.check_intersection(True)
+        if self.hint_sudoku.check_naked_pair(True,True) != None:
+            return self.hint_sudoku.check_naked_pair(True)
+        if self.hint_sudoku.check_intersection_claiming(True,True) != None:
+            return self.hint_sudoku.check_intersection_claiming(True)
+        if self.hint_sudoku.check_naked_triple(True, True) != None:
+            return self.hint_sudoku.check_naked_triple(True)
+        
+        return "Add possible to get the Hint "
     
     def get_possible(self):
-        possible_sudoku = Sd()
-        possible_sudoku.result = self.create_current_board()
-        possible_sudoku.add_possible()
+        if self.game.possible_added == False:
 
-        for i in range(9):
-            for j in range(9):
-                if self.board[i][j].number == 0:
-                    for val in possible_sudoku.possible[i][j]:
-                        self.board[i][j].possible.add(val)
+            self.hint_sudoku.add_possible()
+
+            for i in range(9):
+                for j in range(9):
+                    if self.board[i][j].number == 0:
+                        for val in self.hint_sudoku.possible[i][j]:
+                            self.board[i][j].possible.add(val)
+
+            self.game.possible_added = True

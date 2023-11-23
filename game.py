@@ -27,6 +27,8 @@ class Game:
         self.difficulty = 0
         self.game_no = 0
 
+        #possible indicator
+        self.possible_added = False
         #clock
         self.start_timer = True
         self.ticks = 0
@@ -204,6 +206,7 @@ class Game:
             self.game_status = False
             self.start_timer = False
             self.board_created = False
+            self.possible_added = False
             self.prev_ticks = pygame.time.get_ticks()
         elif self.buttons.hint.number_rect.collidepoint(mouse_pos):
             # store the hint message

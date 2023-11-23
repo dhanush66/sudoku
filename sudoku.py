@@ -7,6 +7,7 @@ class Sd:
         self.result = None
         self.winner = True
         self.possible = [[[1,2,3,4,5,6,7,8,9] for i in range(9)] for j in range(9)]
+        self.prev_hint = []
 
     def get_board(self):
         print("Enter number if current position have value.")
@@ -132,7 +133,7 @@ class Sd:
                         self.possible[m][n].remove(val)
 
 
-    def check_possible_with_row(self, a, b=0, check_next=False):
+    def check_possible_with_row(self, a, b=0, check_next=False, if_check=False):
         #E.g  board [6,7,0,9,0,0,4,2,3]
         # possible [[],[],[5,8],[],[1,5,8],[5,8],[],[],[]]
         #  index    [0,1,2,3,4,5,6,7,8] 
@@ -151,14 +152,16 @@ class Sd:
                     valueRow = val # val = 1
         for col in row:
             if valueRow in self.possible[a][col]:
+                if check_next and (2,a,col,valueRow) not in self.prev_hint:
+                    if if_check == False:
+                        self.prev_hint.append((2,a,col,valueRow)) # For check_possible_with_row function first index should be '2'
+                    return f"Hidden single in row{a+1},column{col+1} with value of {valueRow} "
                 self.result[a][col] = valueRow
                 self.add_possible_row_col(a,col)
                 self.add_possible_grid(a,col)
                 self.possible[a][col].clear()
-                if check_next:
-                    return f"Hidden single in row{a+1},column{col+1} with value of {valueRow} "
 
-    def check_possible_with_col(self, b, a=0, check_next=False):
+    def check_possible_with_col(self, b, a=0, check_next=False, if_check=False):
         #E.g  board [6, possible  [[],      index  [0,      
         #            7,            [],              1,  
         #            0,            [5,8],           2,
@@ -183,12 +186,14 @@ class Sd:
                     valueCol = val
         for row in col:
             if valueCol in self.possible[row][b]:
+                if check_next and (3,row,b,valueCol) not in self.prev_hint:
+                    if if_check == False:
+                        self.prev_hint.append((3,row,b,valueCol)) # For check_possible_with_col function first index should be '3'
+                    return f"Hidden single in row{row+1},column{b+1} with value of {valueCol} "
                 self.result[row][b] = valueCol
                 self.add_possible_row_col(row, b)
                 self.add_possible_grid(row,b)
                 self.possible[row][b].clear()
-                if check_next:
-                    return f"Hidden single in row{row+1},column{b+1} with value of {valueCol} "
 
     def is_in_other_rows_of_grid(self,a,val,square):
         for i in range((a//3)*3, (a//3*3)+3):
@@ -223,7 +228,7 @@ class Sd:
                         self.possible[j][b].remove(val)
             
 
-    def check_intersection_row(self,a, check_next=False):
+    def check_intersection_row(self,a, check_next=False, if_check=False):
         row1 = list()
         rowCount = 0
         for square in range(3):
@@ -242,12 +247,14 @@ class Sd:
                 if self.is_in_other_rows_of_grid(a,val,square):
                     pass
                 else:
-                    self.add_possible_other_row(a,val,square)
-                    if check_next:
+                    if check_next and (5,a,square,val) not in self.prev_hint:
+                        if if_check == False:
+                            self.prev_hint.append((5,a,square,val)) # For check_intersection_row function first index should be '5'
                         return f"There is intersection in row {a+1} in square {square+1}. with value of {val} "
+                    self.add_possible_other_row(a,val,square)
             row1.clear()
 
-    def check_intersection_col(self,b, check_next= False):
+    def check_intersection_col(self,b, check_next= False, if_check=False):
         col1 = list()
         colCount = 0
         for square in range(3):
@@ -266,23 +273,31 @@ class Sd:
                 if self.is_in_other_cols_of_grid(b,val,square):
                     pass
                 else:
-                    self.add_possible_other_col(b,val,square)
-                    if check_next:
+                    if check_next and (6,b,square,val) not in self.prev_hint:
+                        if if_check == False:
+                            self.prev_hint.append((6,b,square,val)) # For check_intersection_col function fist index should be '6'
                         return f"There is intersection claiming available in col{b+1} in square {square+1} with value of {val} "
+                    self.add_possible_other_col(b,val,square)
             col1.clear()
 
 
 
-    def check_intersection(self, check_next=False):
+    def check_intersection(self, check_next=False, if_check=False):
         for i in range(9):
             if check_next:
-                return self.check_intersection_row(i, True)
+                if if_check:
+                    return self.check_intersection_row(i, True, True)
+                else:
+                    return self.check_intersection_row(i, True)
             else:
                 self.check_intersection_row(i)
 
         for j in range(9):
             if check_next:
-                return self.check_intersection_col(j, True)
+                if if_check:
+                    return self.check_intersection_col(j, True, True)
+                else:
+                    return self.check_intersection_col(j, True)
             else:
                 self.check_intersection_col(j)
     
@@ -331,7 +346,7 @@ class Sd:
                         self.possible[row][b].remove(val)
     
 
-    def check_naked_pair(self, check_next=False):
+    def check_naked_pair(self, check_next=False, if_check=False):
         rowPair = list()
         sum1=0
         sum2=0
@@ -343,9 +358,11 @@ class Sd:
                         if col1 != col2:
                             if len(self.possible[i][col2]) == 2 and len(self.possible[i][col1]) == 2 :
                                 if self.possible[i][col1][0] == self.possible[i][col2][0] and self.possible[i][col1][1]==self.possible[i][col2][1]: # check row pair
-                                    self.add_possible_except_pair_row(i, col1, col2)
-                                    if check_next:
+                                    if check_next and (7,i,self.possible[i][col1]) not in self.prev_hint:
+                                        if if_check == False:
+                                            self.prev_hint.append((7,i,self.possible[i][col1])) #For check_naked_pair funtion fist index should be '7'
                                         return f"Naked pair in row {i+1} and values{self.possible[i][col1]} "
+                                    self.add_possible_except_pair_row(i, col1, col2)
                     
             rowPair.clear()
 
@@ -358,9 +375,10 @@ class Sd:
                     if row1 != row2:
                         if len(self.possible[row2][j]) == 2 and len(self.possible[row1][j]) == 2:
                             if self.possible[row1][j][0] == self.possible[row2][j][0] and self.possible[row1][j][1] == self.possible[row2][j][1]:
-                                self.add_possible_except_pair_col(j,row1,row2)
                                 if check_next:
-                                        return f"Naked pair in col {j+1} and values{self.possible[row2][j]} "
+                                    
+                                    return f"Naked pair in col {j+1} and values{self.possible[row2][j]} "
+                                self.add_possible_except_pair_col(j,row1,row2)
                    
             colPair.clear()         
 
@@ -394,7 +412,7 @@ class Sd:
                             self.possible[i][j].remove(val)
 
 
-    def check_intersection_claiming(self, check_next=False):
+    def check_intersection_claiming(self, check_next=False, if_check=False):
         row = list()
         col = list()
 
@@ -413,9 +431,11 @@ class Sd:
                             if col1 != col3:
                                 if val in self.possible[i][col3]:
                                     if self.check_pos_in_same_grid(col1,col3):
+                                        if check_next and (8,i,col1,col2, val) not in self.prev_hint:
+                                            if if_check == False:
+                                                self.prev_hint.append((8,i,col1,col2, val)) # Forcheck_intersection_claiming function first index should be '8'
+                                            return f"Intersection claiming in row {i+1}, cols {col1+1}, {col2+1}, val{val} "
                                         self.add_possible_grid_interscetion_claiming_row(val,i,col1,col3)
-                                        if check_next:
-                                            return f"Intersection claiming in row {i+1}, cols {col1+1}, {col2+1} "
 
             row.clear()
 
@@ -435,9 +455,9 @@ class Sd:
                             if row1 !=row3:
                                 if val in self.possible[row3][j]:
                                     if self.check_pos_in_same_grid(row1,row3):
-                                        self.add_possible_grid_interscetion_claiming_col(val,j,row1,row3)
                                         if check_next:
                                             return f"Intersection claiming in col {j+1}, rows {row1+1}, {row3+1} "
+                                        self.add_possible_grid_interscetion_claiming_col(val,j,row1,row3)
             col.clear()
 
     def fact(self, n):
@@ -753,7 +773,7 @@ class Sd:
                     if val in self.possible[i][j]:
                         self.possible[i][j].remove(val)
 
-    def check_possible_square_each_naked_triple(self,a,b, check_next=False):
+    def check_possible_square_each_naked_triple(self,a,b, check_next=False, if_check=False):
         sq = list()
         sqPoss =list()
         sq = self.get_empty_square_less_4_possible(a,b)
@@ -775,22 +795,22 @@ class Sd:
                         for T in TripleList:
                             DoubleList = self.get_combination_2(T,len(T), 2)
                             if self.is_naked_triple_square(sq,DoubleList):
-                                self.add_possible_naked_triple_square(a,b,sq,DoubleList)
                                 if check_next:
                                     return f"Naked triple in sq {sq+1}, row {a+1}, col {b+1}, double list{DoubleList} "
+                                self.add_possible_naked_triple_square(a,b,sq,DoubleList)
                             DoubleList.clear()
                         TripleList.clear()
                     elif len(sqPoss) ==3:
                         DoubleList = self.get_combination_2(sqPoss,len(sqPoss), 2)
                         if self.is_naked_triple_square(sq,DoubleList):
-                                self.add_possible_naked_triple_square(a,b,sq,DoubleList)
                                 if check_next:
                                     return f"Naked triple in sq {sq+1}, row {a+1}, col {b+1}, double list{DoubleList} "
+                                self.add_possible_naked_triple_square(a,b,sq,DoubleList)
                         DoubleList.clear()        
             sqPoss.clear()
 
 
-    def check_naked_triple(self, check_next=False):
+    def check_naked_triple(self, check_next=False, if_check=False):
         row=list()
         rowPoss= list()
         col=list()
@@ -815,17 +835,21 @@ class Sd:
                         for T in TripleList:
                             DoubleList = self.get_combination_2(T,len(T), 2)
                             if self.is_naked_triple_row(a,row,DoubleList):
-                                self.add_possible_naked_triple_row(a,row,DoubleList)
-                                if check_next:
+                                if check_next and (9,a,row,DoubleList) not in self.prev_hint:
+                                    if if_check == False:
+                                        self.prev_hint.append((9,a,row,DoubleList)) # For check_naked_triple function double possible row, first index should be '9'
                                     return f"Naked triple in row {a+1}, col {row+1}, combination {DoubleList} "
+                                self.add_possible_naked_triple_row(a,row,DoubleList)
                             DoubleList.clear()
                         TripleList.clear()
                     elif len(rowPoss) ==3:
                         DoubleList = self.get_combination_2(rowPoss,len(rowPoss), 2)
                         if self.is_naked_triple_row(a,row,DoubleList):
-                                self.add_possible_naked_triple_row(a,row,DoubleList)
-                                if check_next:
+                                if check_next and (10,a, row,DoubleList) not in self.prev_hint:
+                                    if if_check == False:
+                                        self.prev_hint.append((10,a, row,DoubleList)) # For check_naked_triple function triple possible row, fist index should be '10'
                                     return f"Naked triple in row {a+1}, col {row+1}, combination {DoubleList} "
+                                self.add_possible_naked_triple_row(a,row,DoubleList)
                         DoubleList.clear()        
             rowPoss.clear()
             
@@ -848,17 +872,21 @@ class Sd:
                         for T in TripleList:
                             DoubleList = self.get_combination_2(T,len(T), 2)
                             if self.is_naked_triple_col(b,col,DoubleList):
-                                self.add_possible_naked_triple_col(b,col,DoubleList)
-                                if check_next:
+                                if check_next and (11,b,col,DoubleList) not in self.prev_hint:
+                                    if if_check == False:
+                                        self.prev_hint.append((11,b,col,DoubleList)) # For check_naked_triple function double possible col, first index should be '11'
                                     return f"Naked triple in col {b+1}, row {col+1}, combination {DoubleList} "
+                                self.add_possible_naked_triple_col(b,col,DoubleList)
                             DoubleList.clear()
                         TripleList.clear()
                     elif len(colPoss) ==3:
                         DoubleList = self.get_combination_2(colPoss,len(colPoss), 2)
                         if self.is_naked_triple_col(b,col,DoubleList):
-                                self.add_possible_naked_triple_col(b,col,DoubleList)
-                                if check_next:
+                                if check_next and (12, b, col, DoubleList) not in self.prev_hint:
+                                    if if_check == False:
+                                        self.prev_hint.append((12, b, col, DoubleList)) # For check_naked_triple function triple possible col, fist index should be '12'
                                     return f"Naked triple in col {b+1}, row {col+1}, combination {DoubleList} "
+                                self.add_possible_naked_triple_col(b,col,DoubleList)
                         DoubleList.clear()        
             colPoss.clear()
 
@@ -866,16 +894,22 @@ class Sd:
             for j in range(3):
                 self.check_possible_square_each_naked_triple(i,j, check_next)
 
-    def check_possible(self,check_next=False):
+    def check_possible(self,check_next=False, if_check=False):
         for i in range(9):
             if check_next:
-                return self.check_possible_with_row(i, True)
+                if if_check:
+                    return self.check_possible_with_row(i, True, True)
+                else:
+                    return self.check_possible_with_row(i, True)
             else:
                 self.check_possible_with_row(i)
 
         for j in range(9):
             if check_next:
-                return self.check_possible_with_col(j, True)
+                if if_check:
+                    return self.check_possible_with_col(j, True, True)
+                else:
+                    return self.check_possible_with_col(j, True)
             else:
                 self.check_possible_with_col(j)
 
@@ -889,7 +923,7 @@ class Sd:
         return sq
 
 
-    def check_possible_square_each(self, a, b, check_next=False):
+    def check_possible_square_each(self, a, b, check_next=False, if_check=False):
         # if possible 1 available only one time in a square, value '1' can be on that cell only
         sq = list()
         sq = self.get_empty_square(a,b)
@@ -906,19 +940,24 @@ class Sd:
         
         for i,j in sq:
             if val in self.possible[i][j]:
+                if check_next and (4,i,j,val) not in self.prev_hint:
+                    if if_check == False:
+                        self.prev_hint.append((4,i,j,val)) # For check_possible_square_each function first index should be '4'
+                    return f"Hidden single in square contains row {i+1}, column {j+1}. with value of {val} "
                 self.result[i][j] = val
                 self.add_possible_row_col(i,j)
                 self.add_possible_grid(i,j)
                 self.possible[i][j].clear()
-                if check_next:
-                    return f"Hidden single in square contains row {i+1}, column {j+1}. with value of {val} "
     
 
-    def check_possible_square(self, check_next=False):
+    def check_possible_square(self, check_next=False, if_check=False):
         for i in range(3):
             for j in range(3):
                 if check_next:
-                    return self.check_possible_square_each(i,j, True)
+                    if if_check:
+                        return self.check_possible_square_each(i,j, True, True)
+                    else:
+                        return self.check_possible_square_each(i,j, True)
                 else:
                     self.check_possible_square_each(i,j)
 
@@ -933,18 +972,22 @@ class Sd:
                         self.possible[i][j].clear()
                             
 
-    def add_values(self, check_next=False): # add values to the board if one possible available in the cell
+    def add_values(self, check_next=False, if_check=False): # add values to the board if one possible available in the cell
         for i in range(9):
             for j in range(9):
                 if len(self.possible[i][j]) != 9:
                     if len(self.possible[i][j]) == 1:
+                        val = self.possible[i][j]
+                        if check_next and (1,i,j,val) not in self.prev_hint:
+                            if if_check == False:
+                                self.prev_hint.append((1,i,j,val)) # add_valued function first index should be '1'
+                            return f"There is only one possible value in row {i+1}, column {j+1}. with value of {val} "
                         val = self.possible[i][j].pop()
                         self.result[i][j] = val
                         self.add_possible_row_col(i,j)
                         self.add_possible_grid(i,j)
                         self.possible[i][j].clear()
-                        if check_next:
-                            return f"There is only one possible value in row {i+1}, column {j+1}. with value of {val} "
+
 
 
                 
@@ -972,5 +1015,5 @@ class Sd:
 if __name__ == "__main__":
     player = Sd()
     #player.get_board()
-    player.print_board()
-    player.play() # this code will solve till challenging sudoku
+    # player.print_board()
+    # player.play() # this code will solve till challenging sudoku
