@@ -451,6 +451,7 @@ class Sd:
 
     def check_hidden_pair(self, check_next=False, if_check=False):
         hiddenPair = list()
+        fun=lambda a : [val+1 for val in a]
 
         for i in range(9): # check row
             hiddenPair = self.get_row_with_only_2_possible_hidden(i)
@@ -458,10 +459,10 @@ class Sd:
                 for col1 in hiddenPair[0][1:]:
                     for val1 in self.possible[i][col1]:
                         if val1 != hiddenPair[0][0] and val1 !=hiddenPair[1][0]:
-                            if check_next and (7,i,hiddenPair[0][0],hiddenPair[0][0]) not in self.prev_hint:
+                            if check_next and (14,i,hiddenPair[0][0],hiddenPair[0][0]) not in self.prev_hint:
                                 if if_check == False:
-                                    self.prev_hint.append((7,i,hiddenPair[0][0],hiddenPair[0][0])) #For check_naked_pair funtion fist index should be '7'
-                                return f"Hidden pair in row {i+1}, cols{hiddenPair[0][1:]} and values{hiddenPair[0][0]},{hiddenPair[1][0]}  "
+                                    self.prev_hint.append((14,i,hiddenPair[0][0],hiddenPair[0][0])) #For check_naked_pair funtion fist index should be '7'
+                                return f"Hidden/ Naked pair in row {i+1}, cols{fun(hiddenPair[0][1:])} and values{hiddenPair[0][0]},{hiddenPair[1][0]}  "
                             self.possible[i][col1].remove(val1)
                     
             hiddenPair.clear()
@@ -474,10 +475,10 @@ class Sd:
                 for row1 in hiddenPair[0][1:]:
                     for val1 in self.possible[row1][j]:
                         if val1 != hiddenPair[0][0] and val1 !=hiddenPair[1][0]:
-                            if check_next and (13,i,hiddenPair[0][0],hiddenPair[1][0]) not in self.prev_hint:
+                            if check_next and (15,j,hiddenPair[0][0],hiddenPair[1][0]) not in self.prev_hint:
                                 if if_check == False:
-                                    self.prev_hint.append((13,j,hiddenPair[0][0],hiddenPair[1][0])) #For check_naked_pair col funtion fist index should be '13'
-                                return f"Hidden pair in rows{hiddenPair[0][1:]}, col {j+1} and values{hiddenPair[0][0]}, {hiddenPair[1][0]} "
+                                    self.prev_hint.append((15,j,hiddenPair[0][0],hiddenPair[1][0])) #For check_naked_pair col funtion fist index should be '13'
+                                return f"Hidden/ Naked pair in rows{fun(hiddenPair[0][1:])}, col {j+1} and values{hiddenPair[0][0]}, {hiddenPair[1][0]} "
                             self.possible[row1][j].remove(val1)
                    
             hiddenPair.clear()         
@@ -534,7 +535,7 @@ class Sd:
                                         if check_next and (8,i,col1,col2, val) not in self.prev_hint:
                                             if if_check == False:
                                                 self.prev_hint.append((8,i,col1,col2, val)) # For check_intersection_claiming function first index should be '8'
-                                            return f"Intersection claiming in row {i+1}, cols {col1+1}, {col3+1}, val{val} "
+                                            return f"Intersection/ Intersection claiming in row {i+1}, cols {col1+1}, {col3+1}, val{val} "
                                         self.add_possible_grid_interscetion_claiming_row(val,i,col1,col3)
 
             row.clear()
@@ -555,8 +556,10 @@ class Sd:
                             if row1 !=row3:
                                 if val in self.possible[row3][j]:
                                     if self.check_pos_in_same_grid(row1,row3):
-                                        if check_next:
-                                            return f"Intersection claiming in col {j+1}, rows {row1+1}, {row3+1} "
+                                        if check_next and (16,j,row1,row3, val) not in self.prev_hint:
+                                            if if_check == False:
+                                                self.prev_hint.append((16,j,row1,row3, val)) # For check_intersection_claiming function first index should be '16'
+                                            return f"Intersection/ Intersection claiming in rows {row1+1},{row3+1}, col {j+1}, val{val} "
                                         self.add_possible_grid_interscetion_claiming_col(val,j,row1,row3)
             col.clear()
 
@@ -915,6 +918,7 @@ class Sd:
         rowPoss= list()
         col=list()
         colPoss = list()
+        fun=lambda a : [val+1 for val in a]
         for a in range(9): #check row
             row = self.get_empty_row_less_than_4_possible(a)
             if len(row)>=3: 
@@ -938,7 +942,7 @@ class Sd:
                                 if check_next and (9,a,row,DoubleList) not in self.prev_hint:
                                     if if_check == False:
                                         self.prev_hint.append((9,a,row,DoubleList)) # For check_naked_triple function double possible row, first index should be '9'
-                                    return f"Naked triple in row {a+1}, col {row+1}, combination {DoubleList} "
+                                    return f"Naked triple in row {a+1}, col {fun(row)}, combination {DoubleList} "
                                 self.add_possible_naked_triple_row(a,row,DoubleList)
                             DoubleList.clear()
                         TripleList.clear()
@@ -948,7 +952,7 @@ class Sd:
                                 if check_next and (10,a, row,DoubleList) not in self.prev_hint:
                                     if if_check == False:
                                         self.prev_hint.append((10,a, row,DoubleList)) # For check_naked_triple function triple possible row, fist index should be '10'
-                                    return f"Naked triple in row {a+1}, col {row+1}, combination {DoubleList} "
+                                    return f"Naked triple in row {a+1}, col {fun(row)}, combination {DoubleList} "
                                 self.add_possible_naked_triple_row(a,row,DoubleList)
                         DoubleList.clear()        
             rowPoss.clear()
@@ -975,7 +979,7 @@ class Sd:
                                 if check_next and (11,b,col,DoubleList) not in self.prev_hint:
                                     if if_check == False:
                                         self.prev_hint.append((11,b,col,DoubleList)) # For check_naked_triple function double possible col, first index should be '11'
-                                    return f"Naked triple in col {b+1}, row {col+1}, combination {DoubleList} "
+                                    return f"Naked triple in col {b+1}, row {fun(col)}, combination {DoubleList} "
                                 self.add_possible_naked_triple_col(b,col,DoubleList)
                             DoubleList.clear()
                         TripleList.clear()
@@ -985,7 +989,7 @@ class Sd:
                                 if check_next and (12, b, col, DoubleList) not in self.prev_hint:
                                     if if_check == False:
                                         self.prev_hint.append((12, b, col, DoubleList)) # For check_naked_triple function triple possible col, fist index should be '12'
-                                    return f"Naked triple in col {b+1}, row {col+1}, combination {DoubleList} "
+                                    return f"Naked triple in col {b+1}, row {fun(col)}, combination {DoubleList} "
                                 self.add_possible_naked_triple_col(b,col,DoubleList)
                         DoubleList.clear()        
             colPoss.clear()
