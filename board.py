@@ -257,6 +257,8 @@ class Board:
             return self.hint_sudoku.check_intersection(True)
         if self.hint_sudoku.check_naked_pair(True,True) != None:
             return self.hint_sudoku.check_naked_pair(True)
+        if self.hint_sudoku.check_hidden_pair(True,True) != None:
+            return self.hint_sudoku.check_hidden_pair(True)
         if self.hint_sudoku.check_intersection_claiming(True,True) != None:
             return self.hint_sudoku.check_intersection_claiming(True)
         if self.hint_sudoku.check_naked_triple(True, True) != None:
