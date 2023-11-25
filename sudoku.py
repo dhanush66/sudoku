@@ -133,13 +133,13 @@ class Sd:
                         self.possible[m][n].remove(val)
 
 
-    def check_possible_with_row(self, a, b=0, check_next=False, if_check=False):
+    def check_possible_with_row(self, a, check_next=False, if_check=False):
         #E.g  board [6,7,0,9,0,0,4,2,3]
         # possible [[],[],[5,8],[],[1,5,8],[5,8],[],[],[]]
         #  index    [0,1,2,3,4,5,6,7,8] 
         # here 4th index col can only have value '1' 
         row=list()
-        row=self.get_empty_row(a,b) # [2,4,5]
+        row=self.get_empty_row(a,0) # [2,4,5]
         
         valueRow = 0
         for col in row:
@@ -161,7 +161,7 @@ class Sd:
                 self.add_possible_grid(a,col)
                 self.possible[a][col].clear()
 
-    def check_possible_with_col(self, b, a=0, check_next=False, if_check=False):
+    def check_possible_with_col(self, b, check_next=False, if_check=False):
         #E.g  board [6, possible  [[],      index  [0,      
         #            7,            [],              1,  
         #            0,            [5,8],           2,
@@ -173,7 +173,7 @@ class Sd:
         #            3]            []]              8]
         # here 4th index row can only have value '1' 
         col= list()
-        col = self.get_empty_col(a,b)           
+        col = self.get_empty_col(0,b)           
         
         valueCol = 0
         for row in col:
@@ -1002,18 +1002,18 @@ class Sd:
         for i in range(9):
             if check_next:
                 if if_check:
-                    return self.check_possible_with_row(i, True, True)
+                    return self.check_possible_with_row(i, check_next, if_check)
                 else:
-                    return self.check_possible_with_row(i, True)
+                    return self.check_possible_with_row(i, check_next)
             else:
                 self.check_possible_with_row(i)
 
         for j in range(9):
             if check_next:
                 if if_check:
-                    return self.check_possible_with_col(j, True, True)
+                    return self.check_possible_with_col(j, check_next, if_check)
                 else:
-                    return self.check_possible_with_col(j, True)
+                    return self.check_possible_with_col(j, check_next)
             else:
                 self.check_possible_with_col(j)
 
