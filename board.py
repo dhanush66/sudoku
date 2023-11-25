@@ -125,6 +125,8 @@ class Board:
             if self.update_result():
                 self.game.start_timer = False
 
+            self.update_current_board()
+
     def update_possible(self, row, col, val):
         """Update board with possible"""
         if self.board[row][col].editable and self.game.error_number == False and self.board[row][col].number == 0:
@@ -132,6 +134,8 @@ class Board:
                 self.board[row][col].possible.remove(val)
             else:
                 self.board[row][col].possible.add(val)
+        
+        self.update_current_board()
 
     def delete_number_board(self, row, col):
         """Delete the number in the board"""
@@ -246,6 +250,20 @@ class Board:
                         for val in self.board[i][j].possible:
                             temp.possible[i][j].append(val)
         return temp
+    
+    def update_current_board(self):
+        """Update self.board numbers and possible to self.hint_sudoku"""
+
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.board[i][j].number:
+                    self.hint_sudoku.result[i].append(self.board[i][j].number)
+                    self.hint_sudoku.possible[i][j].clear()
+                else:
+                    if self.game.possible_added == True:
+                        self.hint_sudoku.possible[i][j].clear()
+                        for val in self.board[i][j].possible:
+                            self.hint_sudoku.possible[i][j].append(val)
 
     def get_hint(self):
 

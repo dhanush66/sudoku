@@ -455,25 +455,14 @@ class Sd:
         for i in range(9): # check row
             hiddenPair = self.get_row_with_only_2_possible_hidden(i)
             if len(hiddenPair) > 1:
-                for col1 in hiddenPair[0][1:]:  #assuming single hidded pair available in all scenario
-                        for col2 in hiddenPair[0][1:]:
-                            if col1 != col2:
-                                if len(self.possible[i][col2]) == 2 and len(self.possible[i][col1]) == 2 :
-                                    if self.possible[i][col1][0] == self.possible[i][col2][0] and self.possible[i][col1][1]==self.possible[i][col2][1]: # check row pair
-                                        if check_next and (7,i,self.possible[i][col1]) not in self.prev_hint:
-                                            if if_check == False:
-                                                self.prev_hint.append((7,i,self.possible[i][col1])) #For check_naked_pair funtion fist index should be '7'
-                                            return f"Hidden pair in row {i+1}, cols{hiddenPair[0][1:]} and values{self.possible[i][col1]} "
-                                        self.add_possible_except_pair_row(i, col1, col2)
-                                else:
-                                    for col1 in hiddenPair[0][1:]:
-                                        for val1 in self.possible[i][col1]:
-                                            if val1 != hiddenPair[0][0] and val1 !=hiddenPair[1][0]:
-                                                if check_next and (7,i,hiddenPair[0][0],hiddenPair[0][0]) not in self.prev_hint:
-                                                    if if_check == False:
-                                                        self.prev_hint.append((7,i,hiddenPair[0][0],hiddenPair[0][0])) #For check_naked_pair funtion fist index should be '7'
-                                                    return f"Hidden pair in row {i+1}, cols{hiddenPair[0][1:]} and values{hiddenPair[0][0]},{hiddenPair[0][0]}  "
-                                                self.possible[i][col1].remove(val1)
+                for col1 in hiddenPair[0][1:]:
+                    for val1 in self.possible[i][col1]:
+                        if val1 != hiddenPair[0][0] and val1 !=hiddenPair[1][0]:
+                            if check_next and (7,i,hiddenPair[0][0],hiddenPair[0][0]) not in self.prev_hint:
+                                if if_check == False:
+                                    self.prev_hint.append((7,i,hiddenPair[0][0],hiddenPair[0][0])) #For check_naked_pair funtion fist index should be '7'
+                                return f"Hidden pair in row {i+1}, cols{hiddenPair[0][1:]} and values{hiddenPair[0][0]},{hiddenPair[1][0]}  "
+                            self.possible[i][col1].remove(val1)
                     
             hiddenPair.clear()
 
@@ -483,24 +472,13 @@ class Sd:
             hiddenPair = self.get_col_with_only_2_possible_hidden(j)
             if len(hiddenPair) > 1:
                 for row1 in hiddenPair[0][1:]:
-                    for row2 in hiddenPair[0][1:]:
-                        if row1 != row2:
-                            if len(self.possible[row2][j]) == 2 and len(self.possible[row1][j]) == 2:
-                                if self.possible[row1][j][0] == self.possible[row2][j][0] and self.possible[row1][j][1] == self.possible[row2][j][1]:
-                                    if check_next and (13,j,self.possible[row1][j]) not in self.prev_hint:
-                                        if if_check == False:
-                                            self.prev_hint.append((13,j,self.possible[row1][j])) #For check_naked_pair col funtion fist index should be '13'
-                                        return f"Hidden pair in rows{hiddenPair[0][1:]},col {j+1} and values{self.possible[row2][j]} "
-                                    self.add_possible_except_pair_col(j,row1,row2)
-                            else:
-                                for row1 in hiddenPair[0][1:]:
-                                    for val1 in self.possible[row1][j]:
-                                        if val1 != hiddenPair[0][0] and val1 !=hiddenPair[1][0]:
-                                            if check_next and (13,i,hiddenPair[0][0],hiddenPair[1][0]) not in self.prev_hint:
-                                                if if_check == False:
-                                                    self.prev_hint.append((13,j,hiddenPair[0][0],hiddenPair[1][0])) #For check_naked_pair col funtion fist index should be '13'
-                                                return f"Hidden pair in rows{hiddenPair[0][1:]}, col {j+1} and values{hiddenPair[0][0]}, {hiddenPair[1][0]} "
-                                            self.possible[row1][j].remove(val1)
+                    for val1 in self.possible[row1][j]:
+                        if val1 != hiddenPair[0][0] and val1 !=hiddenPair[1][0]:
+                            if check_next and (13,i,hiddenPair[0][0],hiddenPair[1][0]) not in self.prev_hint:
+                                if if_check == False:
+                                    self.prev_hint.append((13,j,hiddenPair[0][0],hiddenPair[1][0])) #For check_naked_pair col funtion fist index should be '13'
+                                return f"Hidden pair in rows{hiddenPair[0][1:]}, col {j+1} and values{hiddenPair[0][0]}, {hiddenPair[1][0]} "
+                            self.possible[row1][j].remove(val1)
                    
             hiddenPair.clear()         
 
@@ -556,7 +534,7 @@ class Sd:
                                         if check_next and (8,i,col1,col2, val) not in self.prev_hint:
                                             if if_check == False:
                                                 self.prev_hint.append((8,i,col1,col2, val)) # For check_intersection_claiming function first index should be '8'
-                                            return f"Intersection claiming in row {i+1}, cols {col1+1}, {col2+1}, val{val} "
+                                            return f"Intersection claiming in row {i+1}, cols {col1+1}, {col3+1}, val{val} "
                                         self.add_possible_grid_interscetion_claiming_row(val,i,col1,col3)
 
             row.clear()
@@ -1140,4 +1118,4 @@ if __name__ == "__main__":
     player = Sd()
     #player.get_board()
     # player.print_board()
-    #player.play() # this code will solve till challenging sudoku
+    player.play() # this code will solve till challenging sudoku

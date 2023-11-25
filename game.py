@@ -209,12 +209,12 @@ class Game:
             self.possible_added = False
             self.prev_ticks = pygame.time.get_ticks()
         elif self.buttons.hint.number_rect.collidepoint(mouse_pos):
-            # store the hint message
-            self.hint_message = self.board.get_hint()
             if self.buttons.hint_selected:
                 self.buttons.hint_selected = False
                 self.hint_message = None
             else:
+                # store the hint message
+                self.hint_message = self.board.get_hint()
                 self.buttons.hint_selected=True
         elif self.buttons.possible.number_rect.collidepoint(mouse_pos):
             self.board.get_possible()
