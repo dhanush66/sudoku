@@ -9,7 +9,7 @@ class Font:
         elif Type == 2:
             self.font = pygame.font.SysFont(None, 34)
         elif Type == 3:
-            self.font = pygame.font.SysFont('Lavanderia Sturdy', 100)
+            self.font = pygame.font.SysFont(None, 100)
         self.number_image = self.font.render(self.number, True, self.text_color)
         self.number_rect = self.number_image.get_rect()
 
